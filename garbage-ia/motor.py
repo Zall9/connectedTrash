@@ -9,7 +9,8 @@ IO.setmode(IO.BCM)
 class GroveServo:
     MIN_DEGREE = 0
     MAX_DEGREE = 180
-    INIT_DUTY = 2.5
+    INIT_DUTY = 1.5
+    MIDDLE = 92
 
     def __init__(self, channel):
         IO.setup(channel,IO.OUT)
@@ -26,13 +27,13 @@ class GroveServo:
         self.pwm.ChangeDutyCycle(round(tmp/10.0, 1))
         sleep(2)
 
-    def right(self, step=60):
-        self.setAngle(step)
+    def right(self, step=45):
+        self.setAngle(GroveServo.MIDDLE + step)
         self.reset()
 
-    def left(self, step=60):
-        self.setAngle(step)
+    def left(self, step=45):
+        self.setAngle(GroveServo.MIDDLE - step)
         self.reset()
 
     def reset(self):
-        self.setAngle()
+        self.setAngle(GroveServo.MIDDLE)

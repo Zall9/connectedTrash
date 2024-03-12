@@ -1,6 +1,7 @@
 import yolov5
 import RPi.GPIO as IO
-
+import cv2
+from Player import Player
 from motor import GroveServo
 from numpy import interp
 
@@ -15,7 +16,22 @@ model.multi_label = False  # NMS multiple labels per box
 model.max_det = 1000  # maximum number of detections per image
 
 # set image
-img = "https://i.ytimg.com/vi/ZN3tXr2_CJ0/maxresdefault.jpg"
+# open camera
+cap = cv2.VideoCapture('/dev/video0', cv2.CAP_V4L)
+# set dimensions
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 2560)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1440)
+
+# take frame
+ret, frame = cap.read()
+# write frame to file
+cv2.imwrite('image.jpg', frame)
+# release camera
+cap.release()
+cv2.destroyAllWindows()
+
+img = "./image.jpg"
+
 
 # perform inference
 results = model(img, size=640)
@@ -41,10 +57,14 @@ is_plastic = best_result["name"] == "plastic"
 print("start")
 motor = GroveServo(12)
 motor.reset()
+player = Player()
 if(is_plastic):
     print("right")
+    player.play()
     motor.right()
 else:
     print("left")
+    player.is_good = False
+    player.play()
     motor.left()
 motor.pwm.stop()
