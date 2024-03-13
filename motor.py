@@ -3,9 +3,6 @@ import sys
 from time import sleep
 from numpy import interp
 
-IO.setwarnings(False)
-IO.setmode(IO.BCM)
-
 class GroveServo:
     MIN_DEGREE = 0
     MAX_DEGREE = 180

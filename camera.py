@@ -14,4 +14,5 @@ class Camera:
 		time.sleep(1)
 		self.camera.capture_file(input)
 		self.camera.stop_recording()
+		time.sleep(1)
 		
