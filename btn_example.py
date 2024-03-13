@@ -4,10 +4,16 @@ from time import sleep
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 i = 0
 while True:
-	if GPIO.input(6) == GPIO.HIGH:
+	if GPIO.input(6) != GPIO.HIGH:
+		print("clicked" + str(i))
+		i += 1
+		sleep(0.5)
+	
+	if GPIO.input(14) != GPIO.HIGH:
 		print("clicked" + str(i))
 		i += 1
 		sleep(0.5)

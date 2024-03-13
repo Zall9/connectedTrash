@@ -37,8 +37,9 @@ def moveTrash(model, cam, choosePlastic):
             motor.left()
         motor.pwm.stop()
     else:
-        player.play(False)
-    sleep(1)
+        player.is_good = False
+        player.play()
+    
 
 # load model
 model = yolov5.load('keremberke/yolov5s-garbage')
@@ -56,32 +57,46 @@ img = "./image.jpg"
 
 IO.setwarnings(False)
 IO.setmode(IO.BCM)
-IO.setup(6, IO.IN, pull_up_down=IO.PUD_DOWN)
-IO.setup(17, IO.IN, pull_up_down=IO.PUD_DOWN)
+
+port1 = 6
+port2 = 14
+IO.setup(port1, IO.IN, pull_up_down=IO.PUD_DOWN)
+IO.setup(port2, IO.IN, pull_up_down=IO.PUD_DOWN)
 
 motor = GroveServo(12)
 
 def button_callback(channel):
-    if(channel == 6):
+    if(channel == port1):
         print('plastic')
-        moveTrash(model, cam, True)
+        #moveTrash(model, cam, True)
     else:
         print('not plastic')
-        moveTrash(model, cam, False)
+        #moveTrash(model, cam, False)
+
+    
+def read_input():
+    while True:
+        if IO.input(port1) != IO.HIGH:
+            return 'plastic'
+        
+        elif IO.input(port2) != IO.HIGH:
+            return 'not plastic'
+    
     
 print("init finished")
 
-IO.add_event_detect(6,IO.RISING,callback=button_callback)
-IO.add_event_detect(17,IO.RISING,callback=button_callback)
+"""IO.add_event_detect(port1,IO.RISING,callback=button_callback)
+IO.add_event_detect(port2,IO.RISING,callback=button_callback)
+"""
+while True:
+    input = None
+    input = read_input()
 
-#while True:
-    # Plastic
-    #if IO.input(6) == IO.HIGH:
-        #print('plastic')
-        #moveTrash(model, cam, True)
-    # Not Plastic
-    #elif IO.input(17) == IO.HIGH:
-        #print('not plastic')
-        #moveTrash(model, cam, False)
+    print(input)
+    if input == 'plastic':
+        moveTrash(model, cam, True)
+    if input == 'not plastic':
+        moveTrash(model, cam, False)
+
 
 
