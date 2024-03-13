@@ -19,8 +19,9 @@ def objectIsPlastic(model, cam):
     boxes = predictions[:, :4] # x1, y1, x2, y2
     scores = predictions[:, 4]
     categories = predictions[:, 5]
-
+    
     results.pandas().xyxy[0].sort_values(by='confidence', ascending=False, inplace=True)
+    #print(results.pandas().xyxy[0])
     best_result = results.pandas().xyxy[0].iloc[0]
 
     print(f'Best result: {best_result["name"]} with confidence {best_result["confidence"]}')
@@ -30,6 +31,8 @@ def objectIsPlastic(model, cam):
 def moveTrash(model, cam, choosePlastic):
     is_plastic = objectIsPlastic(model, cam)
     if(is_plastic == choosePlastic):
+        print("Good choice")
+        player.is_good = True
         player.play()
         if(choosePlastic):
             motor.right()
@@ -37,8 +40,10 @@ def moveTrash(model, cam, choosePlastic):
             motor.left()
         motor.pwm.stop()
     else:
+        print("Bad choice")
         player.is_good = False
         player.play()
+    print("User choice ended")
     
 
 # load model
