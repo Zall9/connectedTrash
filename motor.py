@@ -12,7 +12,8 @@ class GroveServo:
     def __init__(self, channel):
         IO.setup(channel,IO.OUT)
         self.pwm = IO.PWM(channel,50)
-        self.pwm.start(GroveServo.INIT_DUTY)
+        self.start()
+        self.reset()
 
     def __del__(self):
         self.pwm.stop()
@@ -34,3 +35,10 @@ class GroveServo:
 
     def reset(self):
         self.setAngle(GroveServo.MIDDLE)
+        
+    def stop(self):
+        sleep(1)
+        self.pwm.stop()
+        
+    def start(self):
+        self.pwm.start(GroveServo.INIT_DUTY)

@@ -20,13 +20,16 @@ def objectIsPlastic(model, cam):
     scores = predictions[:, 4]
     categories = predictions[:, 5]
     
-    results.pandas().xyxy[0].sort_values(by='confidence', ascending=False, inplace=True)
-    #print(results.pandas().xyxy[0])
-    best_result = results.pandas().xyxy[0].iloc[0]
-
+    try:
+        results.pandas().xyxy[0].sort_values(by='confidence', ascending=False, inplace=True)
+        best_result = results.pandas().xyxy[0].iloc[0]
+    except:
+        print("error AI")
+        return False
+        
     print(f'Best result: {best_result["name"]} with confidence {best_result["confidence"]}')
 
-    return best_result["name"] == "plastic"
+    return best_result["name"] == "plastic" or best_result["name"] == "paper"
     
 def moveTrash(model, cam, choosePlastic):
     is_plastic = objectIsPlastic(model, cam)
@@ -38,7 +41,6 @@ def moveTrash(model, cam, choosePlastic):
             motor.right()
         else:
             motor.left()
-        motor.pwm.stop()
     else:
         print("Bad choice")
         player.is_good = False
@@ -70,37 +72,25 @@ IO.setup(port2, IO.IN, pull_up_down=IO.PUD_DOWN)
 
 motor = GroveServo(12)
 
-def button_callback(channel):
-    if(channel == port1):
-        print('plastic')
-        #moveTrash(model, cam, True)
-    else:
-        print('not plastic')
-        #moveTrash(model, cam, False)
-
-    
 def read_input():
     while True:
         if IO.input(port1) != IO.HIGH:
-            return 'plastic'
+            return 'recyclable'
         
         elif IO.input(port2) != IO.HIGH:
-            return 'not plastic'
+            return 'not recyclable'
     
     
 print("init finished")
 
-"""IO.add_event_detect(port1,IO.RISING,callback=button_callback)
-IO.add_event_detect(port2,IO.RISING,callback=button_callback)
-"""
 while True:
     input = None
     input = read_input()
 
     print(input)
-    if input == 'plastic':
+    if input == 'recyclable':
         moveTrash(model, cam, True)
-    if input == 'not plastic':
+    if input == 'not recyclable':
         moveTrash(model, cam, False)
 
 
